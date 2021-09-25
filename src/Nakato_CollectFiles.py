@@ -42,6 +42,7 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
+                    
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
                     print(filename)
             ipage += 1
@@ -49,7 +50,8 @@ def countfiles(dictfiles, lsttokens, repo):
         print("Error receiving data")
         exit(0)
 # GitHub repo
-repo = 'scottyab/rootbeer'
+repo = 'scottyab/rootbeer' 
+
 # repo = 'Skyscanner/backpack' # This repo is commit heavy. It takes long to finish executing
 # repo = 'k9mail/k-9' # This repo is commit heavy. It takes long to finish executing
 # repo = 'mendhak/gpslogger'
@@ -59,17 +61,15 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["fd02a694b606c4120b8ca7bbe7ce29229376ee",
-                "16ce529bdb32263fb90a392d38b5f53c7ecb6b",
-                "8cea5715051869e98044f38b60fe897b350d4a"]
-
+#lstTokens = ["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"]
+#i have commented my token right here----Nakato
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
 print('Total number of files: ' + str(len(dictfiles)))
 
 file = repo.split('/')[1]
 # change this to the path of your file
-fileOutput = 'data/file_' + file + '.csv'
+fileOutput = '../csv/file_' + file + '.csv'
 rows = ["Filename", "Touches"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)

@@ -42,7 +42,6 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
                     print(filename)
             ipage += 1
@@ -62,7 +61,7 @@ repo = 'scottyab/rootbeer'
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
 lstTokens = []
-#i have removed my token right here----Nakato
+#i have commented my token right here----Nakato
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
 print('Total number of files: ' + str(len(dictfiles)))

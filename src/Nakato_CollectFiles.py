@@ -1,7 +1,7 @@
 import json
 import requests
 import csv
-
+import re
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
@@ -43,7 +43,22 @@ def countfiles(dictfiles, lsttokens, repo):
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                    print(filename)
+                    #collecting source files for rootbeer- IT HAS JAVA, Kotlin, cpp, c and cmake files
+                    javafilename=re.match('\S+.kt$', filename)
+                    kotlinfile=re.match('\S+.kt$', filename)
+                    cppfile=re.match('\S+.cpp$', filename)
+                    cfile=re.match('\S+.c$', filename)
+                    cmakefile=re.match('\S+.txt$', filename)
+                    
+                    if( javafilename or kotlinfile or cppfile or cfile or cmakefile):
+            
+                    #if( javafilename):
+                    #if( kotlinfile):
+                    #if( cppfile):
+                    #if( cfile):
+                    #if( cmakefile):
+                        
+                        print(filename)
             ipage += 1
     except:
         print("Error receiving data")
@@ -60,7 +75,7 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = []
+lstTokens = [" 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"]
 #i have commented my token right here----Nakato
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)

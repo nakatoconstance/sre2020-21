@@ -44,7 +44,7 @@ def countfiles(dictfiles, lsttokens, repo):
                     filename = filenameObj['filename']
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
                     #collecting source files for rootbeer- IT HAS JAVA, Kotlin, cpp, c and cmake files
-                    javafilename=re.match('\S+.kt$', filename)
+                    javafilename=re.match('\S+.java$', filename)
                     kotlinfile=re.match('\S+.kt$', filename)
                     cppfile=re.match('\S+.cpp$', filename)
                     cfile=re.match('\S+.c$', filename)

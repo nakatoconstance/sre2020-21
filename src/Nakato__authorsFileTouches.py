@@ -27,7 +27,8 @@ def countfiles(dictfiles, lsttokens, repo):
         # loop though all the commit pages until the last returned empty page
         while True:
             spage = str(ipage)
-            commitsUrl = 'https://api.github.com/repos/' + repo + '/commits?page=' + spage + '&per_page=100'
+            #commitsUrl = 'https://api.github.com/repos/' + repo + '/commits?page=' + spage + '&per_page=100'
+            commitsUrl = 'https://api.github.com/repos/' + repo + '/commits?author?date?page=' + spage + '&per_page=100'
             jsonCommits, ct = github_auth(commitsUrl, lsttokens, ct)
 
             # break out of the while loop if there are no more commits in the pages
@@ -38,10 +39,13 @@ def countfiles(dictfiles, lsttokens, repo):
                 sha = shaObject['sha']
                 # For each commit, use the GitHub commit API to extract the files touched by the commit
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
+                #shaUrl2 = 'https://api.github.com/repos/' + repo + '/contributors/'+ sha 
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
+                
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
+                    authorname=shaDetails['author']
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
                     #collecting source files for rootbeer- IT HAS JAVA, Kotlin, cpp, c and cmake files
                     javafilename=re.match('\S+.java$', filename)
@@ -59,6 +63,7 @@ def countfiles(dictfiles, lsttokens, repo):
                     #if( cmakefile):
                         
                         print(filename)
+                        print(authorname)
             ipage += 1
     except:
         print("Error receiving data")
@@ -75,8 +80,8 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["i put my token here"]
-#i have commented my token right here----Nakato
+lstTokens = ["i took away my token"]
+#i have removed my token right here----Nakato
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
 print('Total number of files: ' + str(len(dictfiles)))
@@ -84,7 +89,7 @@ print('Total number of files: ' + str(len(dictfiles)))
 file = repo.split('/')[1]
 # change this to the path of your file
 fileOutput = '../csv/file_' + file + '.csv'
-rows = ["Filename", "Touches"]
+rows = ["Filename", "Touches","name","email","date"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)
 writer.writerow(rows)

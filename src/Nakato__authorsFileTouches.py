@@ -2,6 +2,13 @@ import json
 import requests
 import csv
 import re
+
+from prettytable import PrettyTable
+
+table = PrettyTable()
+table.field_names = ["File Name", "Author Name","Date"]
+
+
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
@@ -65,10 +72,12 @@ def countfiles(dictfiles, lsttokens, repo):
                     #if( cfile):
                     #if( cmakefile):
                         
-                        print(filename)
+                        table.add_row([filename, authorname, commitdate ])
+                        #print(filename)
                      
-                        print(authorname)
-                        print(commitdate)
+                        #print(authorname)
+                        #print(commitdate)
+            print(table)             
             ipage += 1
     except:
         print("Error receiving data")
@@ -85,8 +94,11 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["my token goes here"]
+lstTokens = ["token here"]
 #i have commented my token right here----Nakato
+#printing the table data
+
+
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
 print('Total number of files: ' + str(len(dictfiles)))

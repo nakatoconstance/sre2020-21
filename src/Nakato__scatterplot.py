@@ -2,6 +2,20 @@ import json
 import requests
 import csv
 import re
+from prettytable import PrettyTable
+import matplotlib.pyplot as plot
+import pandas as pd 
+
+from dateutil.parser import parse
+
+table = PrettyTable()
+table.field_names = ["File Name", "Author Name","Date"]
+
+flst=[]
+authorlst=[]
+datelst=[]
+datenumberlst=[]
+shalst=[]
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
@@ -40,6 +54,8 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
+               
+               
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
                     dictfiles[filename] = dictfiles.get(filename, 0) + 1
@@ -50,7 +66,20 @@ def countfiles(dictfiles, lsttokens, repo):
                     cfile=re.match('\S+.c$', filename)
                     cmakefile=re.match('\S+.txt$', filename)
                     
+                    #collecting authors
+                    authornamejson=shaDetails['commit']['author']
+                    authorname=authornamejson['name']
+                    commitdate=authornamejson['date']
+                    #dateweek=commitdate.week
+                #   
+                   # a_date = datetime.date(commitdate)
+                    #week_number = a_date.isocalendar()[1]
+                    #Get the week number of a_date
+
+
+                    
                     if( javafilename or kotlinfile or cppfile or cfile or cmakefile):
+                    
             
                     #if( javafilename):
                     #if( kotlinfile):
@@ -58,7 +87,43 @@ def countfiles(dictfiles, lsttokens, repo):
                     #if( cfile):
                     #if( cmakefile):
                         
-                        print(filename)
+                        
+                         #append values to lsts
+                        flst.append(filename)
+                        authorlst.append(authorname)
+                        datelst.append(commitdate)
+                        shalst.append(sha)
+                        
+                        date_series = pd.Series(datelst)
+                        date_series = date_series.map(lambda x: parse(x))
+                        datenumber= date_series.dt.isocalendar().week
+                        # table.add_row([filename, authorname, commitdate ])
+          #  print(datenumber)
+                    
+                     
+                        #print(authorname)
+                        #print(commitdate)
+            list_of_tuples = list(zip(flst, authorlst,datenumber,sha)) 
+    
+# Assign data to tuples. 
+            list_of_tuples  
+            print(list_of_tuples )
+  
+  
+      # Converting lists of tuples into 
+      # pandas Dataframe. 
+            df = pd.DataFrame(list_of_tuples,
+                  columns = ['flename', 'author' ,'weekofyear','sha' ]) 
+     
+# Print data. 
+            print(df)      
+            
+            
+            df.plot.scatter(x='flename', y='weekofyear', title= "Scatter plot between two variables X and Y");
+
+            plot.show(block=True);
+            
+             #print(table)             
             ipage += 1
     except:
         print("Error receiving data")
@@ -77,6 +142,9 @@ repo = 'scottyab/rootbeer'
 # I would advise to create more than one token for repos with heavy commits
 lstTokens = [""]
 #i have commented my token right here----Nakato
+#printing the table data
+
+
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
 print('Total number of files: ' + str(len(dictfiles)))
@@ -84,7 +152,7 @@ print('Total number of files: ' + str(len(dictfiles)))
 file = repo.split('/')[1]
 # change this to the path of your file
 fileOutput = '../csv/file_' + file + '.csv'
-rows = ["Filename", "Touches"]
+rows = ["Filename", "Touches","Author","Date"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)
 writer.writerow(rows)

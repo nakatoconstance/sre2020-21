@@ -1,6 +1,6 @@
 Filename,Touches,Author,Date
+app/src/main/java/com/scottyab/rootbeer/sample/CheckForRootWorker.kt,5
 README.md,43
-app/src/main/java/com/scottyab/rootbeer/sample/CheckForRootWorker.kt,4
 rootbeerlib/src/main/java/com/scottyab/rootbeer/RootBeerNative.java,10
 build.gradle,25
 changes.md,8

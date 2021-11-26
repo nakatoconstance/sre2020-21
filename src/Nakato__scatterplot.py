@@ -3,10 +3,11 @@ import requests
 import csv
 import re
 from prettytable import PrettyTable
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 import pandas as pd 
-
-from dateutil.parser import parse
+from datetime import datetime
+import numpy as np
+import itertools
 
 table = PrettyTable()
 table.field_names = ["File Name", "Author Name","Date"]
@@ -16,6 +17,10 @@ authorlst=[]
 datelst=[]
 datenumberlst=[]
 shalst=[]
+weeklst=[]
+yearslst=[]
+#ticks list
+
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
@@ -70,11 +75,23 @@ def countfiles(dictfiles, lsttokens, repo):
                     authornamejson=shaDetails['commit']['author']
                     authorname=authornamejson['name']
                     commitdate=authornamejson['date']
-                    #dateweek=commitdate.week
-                #   
-                   # a_date = datetime.date(commitdate)
-                    #week_number = a_date.isocalendar()[1]
-                    #Get the week number of a_date
+    
+                     
+                    datet=commitdate
+                    date2=datet.split('T')
+                    dt_str = date2[0]
+
+                    dt_obj = datetime.strptime(dt_str, '%Y-%m-%d')
+                    week=datetime.date( dt_obj).isocalendar()[1]
+                    year=datetime.date( dt_obj).isocalendar()[0]
+                    
+                    #print(type(year))
+                    weeks=str(week)
+                    years=str(year)
+                      
+
+                    weekno=years +"-" + weeks
+                       
 
 
                     
@@ -87,43 +104,51 @@ def countfiles(dictfiles, lsttokens, repo):
                     #if( cfile):
                     #if( cmakefile):
                         
-                        
+                        #getting a week number from the date
+                       
                          #append values to lsts
                         flst.append(filename)
                         authorlst.append(authorname)
-                        datelst.append(commitdate)
+                     
+                        weeklst.append(week)
                         shalst.append(sha)
+                        yearslst.append(year)
                         
-                        date_series = pd.Series(datelst)
-                        date_series = date_series.map(lambda x: parse(x))
-                        datenumber= date_series.dt.isocalendar().week
                         # table.add_row([filename, authorname, commitdate ])
-          #  print(datenumber)
+           # print(datelst)
                     
                      
                         #print(authorname)
                         #print(commitdate)
-            list_of_tuples = list(zip(flst, authorlst,datenumber,sha)) 
-    
-# Assign data to tuples. 
-            list_of_tuples  
-            print(list_of_tuples )
-  
-  
-      # Converting lists of tuples into 
-      # pandas Dataframe. 
-            df = pd.DataFrame(list_of_tuples,
-                  columns = ['flename', 'author' ,'weekofyear','sha' ]) 
-     
-# Print data. 
-            print(df)      
+           # print(flst)
+            # print(authorlst)  
+           # x=flst
+           # y=datelst
+           # z=authorlst
+   #         color = [str(item/255.) for item in ]
+   #CREATE CUMMULATIVE WEEK NUMBERS
+            minyear=min(yearslst)
+            print(minyear)
+            for(yearval,weekval) in zip(yearslst,weeklst):
+                #print(yearval,weekval)
+                cummulativeweek=weekval+(yearval-minyear)*52
+                datelst.append(cummulativeweek)
+            print(datelst)    
             
-            
-            df.plot.scatter(x='flename', y='weekofyear', title= "Scatter plot between two variables X and Y");
+            #convert list of files into a numpy array
+            numpyfile=np.array(flst)
+            unique, index = np.unique(numpyfile, return_inverse=True)
+            print(np.unique(index))
+            plt.scatter(index, datelst)
 
-            plot.show(block=True);
-            
-             #print(table)             
+            plt.xlabel('Weeks Vs Files)')
+            plt.ylabel('Weeks')
+           
+            plt.xticks(range(len(unique)), np.unique(index))
+            plt.title('Files')
+            plt.show()
+
+           
             ipage += 1
     except:
         print("Error receiving data")

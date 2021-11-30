@@ -4,10 +4,9 @@ import csv
 import re
 from prettytable import PrettyTable
 import matplotlib.pyplot as plt
-import pandas as pd 
 from datetime import datetime
 import numpy as np
-import itertools
+import matplotlib.colors
 
 table = PrettyTable()
 table.field_names = ["File Name", "Author Name","Date"]
@@ -85,15 +84,9 @@ def countfiles(dictfiles, lsttokens, repo):
                     week=datetime.date( dt_obj).isocalendar()[1]
                     year=datetime.date( dt_obj).isocalendar()[0]
                     
-                    #print(type(year))
-                    weeks=str(week)
-                    years=str(year)
-                      
+                   
 
-                    weekno=years +"-" + weeks
-                       
-
-
+                    
                     
                     if( javafilename or kotlinfile or cppfile or cfile or cmakefile):
                     
@@ -128,27 +121,38 @@ def countfiles(dictfiles, lsttokens, repo):
    #         color = [str(item/255.) for item in ]
    #CREATE CUMMULATIVE WEEK NUMBERS
             minyear=min(yearslst)
-            print(minyear)
+           # print(minyear)
             for(yearval,weekval) in zip(yearslst,weeklst):
                 #print(yearval,weekval)
                 cummulativeweek=weekval+(yearval-minyear)*52
                 datelst.append(cummulativeweek)
-            print(datelst)    
-            
+            #convert this into a numpy array
+            numydate=np.array(datelst)
+            print(numydate)  
+
+            #convert authors into a numpy array
+            numpyauthor=np.array(flst)
+            unique, aindex = np.unique(numpyauthor, return_inverse=True)
+            print('aindex')
+            print(aindex)
+            colors = aindex
+          #  cmaps = matplotlib.colors.ListedColormap(colors[:len(np.unique(aindex))])
             #convert list of files into a numpy array
             numpyfile=np.array(flst)
             unique, index = np.unique(numpyfile, return_inverse=True)
-            print(np.unique(index))
-            plt.scatter(index, datelst)
+            print('findex')
+            print(index)
+            plt.scatter(index, numydate,c=colors)
 
-            plt.xlabel('Weeks Vs Files)')
+            plt.xlabel('Files')
             plt.ylabel('Weeks')
            
             plt.xticks(range(len(unique)), np.unique(index))
-            plt.title('Files')
+            plt.title('Weeks Vs Files')
             plt.show()
+            
 
-           
+            break;
             ipage += 1
     except:
         print("Error receiving data")
@@ -168,6 +172,7 @@ repo = 'scottyab/rootbeer'
 lstTokens = [""]
 #i have commented my token right here----Nakato
 #printing the table data
+
 
 
 dictfiles = dict()
